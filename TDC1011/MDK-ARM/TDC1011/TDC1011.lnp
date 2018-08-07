@@ -1,0 +1,25 @@
+--cpu=Cortex-M4.fp
+"tdc1011\startup_stm32f407xx.o"
+"tdc1011\main.o"
+"tdc1011\stm32f4xx_it.o"
+"tdc1011\stm32f4xx_hal_msp.o"
+"tdc1011\stm32f4xx_hal_spi.o"
+"tdc1011\stm32f4xx_hal_tim.o"
+"tdc1011\stm32f4xx_hal_tim_ex.o"
+"tdc1011\stm32f4xx_hal_rcc.o"
+"tdc1011\stm32f4xx_hal_rcc_ex.o"
+"tdc1011\stm32f4xx_hal_flash.o"
+"tdc1011\stm32f4xx_hal_flash_ex.o"
+"tdc1011\stm32f4xx_hal_flash_ramfunc.o"
+"tdc1011\stm32f4xx_hal_gpio.o"
+"tdc1011\stm32f4xx_hal_dma_ex.o"
+"tdc1011\stm32f4xx_hal_dma.o"
+"tdc1011\stm32f4xx_hal_pwr.o"
+"tdc1011\stm32f4xx_hal_pwr_ex.o"
+"tdc1011\stm32f4xx_hal_cortex.o"
+"tdc1011\stm32f4xx_hal.o"
+"tdc1011\system_stm32f4xx.o"
+--library_type=microlib --strict --scatter "TDC1011\TDC1011.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "TDC1011.map" -o TDC1011\TDC1011.axf
