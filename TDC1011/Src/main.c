@@ -41,21 +41,45 @@
 #include "stm32f4xx_hal.h"
 
 /* USER CODE BEGIN Includes */
-
+#include "TDC1011.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
 SPI_HandleTypeDef hspi1;
 
+UART_HandleTypeDef huart2;
+
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
+#ifdef __GNUC__
+  /* With GCC/RAISONANCE, small printf (option LD Linker->Libraries->Small printf
+     set to 'Yes') calls __io_putchar() */
+  #define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
+#else
+  #define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
+#endif /* __GNUC__ */
 
+/**
+  * @brief  Retargets the C library printf function to the USART.
+  * @param  None
+  * @retval None
+  */
+PUTCHAR_PROTOTYPE
+{
+	/* Place your implementation of fputc here */
+	/* e.g. write a character to the USART */
+	HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, 100);
+	
+	
+	return ch;
+}
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_SPI1_Init(void);
+static void MX_USART2_UART_Init(void);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -96,8 +120,11 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_SPI1_Init();
+  MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-
+	TDC1011_Config(&hspi1);
+	
+	
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -108,6 +135,16 @@ int main(void)
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
+		
+		HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
+		HAL_Delay(250);
+		HAL_GPIO_TogglePin(LD4_GPIO_Port, LD4_Pin);
+		HAL_Delay(250);
+		HAL_GPIO_TogglePin(LD5_GPIO_Port, LD5_Pin);
+		HAL_Delay(250);
+		HAL_GPIO_TogglePin(LD6_GPIO_Port, LD6_Pin);
+		HAL_Delay(250);
+		
 
   }
   /* USER CODE END 3 */
@@ -195,6 +232,25 @@ static void MX_SPI1_Init(void)
 
 }
 
+/* USART2 init function */
+static void MX_USART2_UART_Init(void)
+{
+
+  huart2.Instance = USART2;
+  huart2.Init.BaudRate = 115200;
+  huart2.Init.WordLength = UART_WORDLENGTH_8B;
+  huart2.Init.StopBits = UART_STOPBITS_1;
+  huart2.Init.Parity = UART_PARITY_NONE;
+  huart2.Init.Mode = UART_MODE_TX_RX;
+  huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart2.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart2) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+}
+
 /** Configure pins as 
         * Analog 
         * Input 
@@ -219,7 +275,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOE, RESET_Pin|EN_Pin|TRIGGER_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(SS_GPIO_Port, SS_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(SS_GPIO_Port, SS_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOD, LD4_Pin|LD3_Pin|LD5_Pin|LD6_Pin, GPIO_PIN_RESET);

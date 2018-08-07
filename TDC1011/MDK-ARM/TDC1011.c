@@ -1,6 +1,8 @@
 #include "TDC1011.h"
 
+
 HAL_StatusTypeDef TDC1011_Config(SPI_HandleTypeDef *hspi){
+	printf("Initializing TDC1011\n");
 	uint16_t StartTick = HAL_GetTick();
 	while(HAL_SPI_GetState(hspi) != HAL_SPI_STATE_READY && ((HAL_GetTick() - StartTick) < 500));
 	if((HAL_GetTick() - StartTick) >= 500)
@@ -25,6 +27,7 @@ HAL_StatusTypeDef TDC1011_Config(SPI_HandleTypeDef *hspi){
 		return HAL_ERROR;
 	if(SendData(hspi, CLOCK_RATE, (0x00 << 2) + 0x00)!= HAL_OK)                                          //CLOCKIN_DIV = 0h (divide by 1 (Default)), AUTOZERO_PERIOD = 0h (64 * T0(Default))
 		return HAL_ERROR;
+	CheckRegister(hspi);
 	
 	return HAL_OK;
 }
@@ -40,7 +43,30 @@ HAL_StatusTypeDef SendData(SPI_HandleTypeDef *hspi, uint8_t Register, uint8_t Da
 	uint8_t TX_Reg[2];
 	TX_Reg[0] = 0x40 + Register;     //0x40 for write operation
 	TX_Reg[1] = Data;
-	return SPI_Transmit(hspi, TX_Reg, 2, 50);
+	return SPI_Transmit(hspi, TX_Reg, 2, 100);
 }
 
+uint8_t ReceiveData(SPI_HandleTypeDef *hspi, uint8_t Register){
+	uint8_t TX_Reg[1];
+	uint8_t RX_Reg[1];
+	TX_Reg[0] = Register;
+	HAL_GPIO_WritePin(SS_GPIO_Port, SS_Pin, GPIO_PIN_RESET);            //Pull Slave Select
+	HAL_StatusTypeDef HAL_Stat1 = HAL_SPI_Transmit(hspi, TX_Reg, 1, 100);
+	HAL_StatusTypeDef HAL_Stat2 = HAL_SPI_Receive(hspi, RX_Reg, 1, 100);
+	HAL_GPIO_WritePin(SS_GPIO_Port, SS_Pin, GPIO_PIN_SET);              //Leave Slave Select
+	
+	return RX_Reg[0];
+}
 
+void CheckRegister(SPI_HandleTypeDef *hspi){
+	printf("CONFIG_0: %#X\n", ReceiveData(hspi, CONFIG_0));
+	printf("CONFIG_1: %#X\n", ReceiveData(hspi, CONFIG_1));
+	printf("CONFIG_2: %#X\n", ReceiveData(hspi, CONFIG_2));
+	printf("CONFIG_3: %#X\n", ReceiveData(hspi, CONFIG_3));
+	printf("CONFIG_4: %#X\n", ReceiveData(hspi, CONFIG_4));
+	printf("TOF_1: %#X\n", ReceiveData(hspi, TOF_1));
+	printf("TOF_0: %#X\n", ReceiveData(hspi, TOF_0));
+	printf("ERROR_FLAGS: %#X\n", ReceiveData(hspi, ERROR_FLAGS));
+	printf("TIMEOUT: %#X\n", ReceiveData(hspi, TIMEOUT));
+	printf("CLOCK_RATE: %#X\n", ReceiveData(hspi, CLOCK_RATE));
+}

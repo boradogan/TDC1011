@@ -28,3 +28,4 @@ tdc1011\stm32f4xx_hal_flash_ex.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_
 tdc1011\stm32f4xx_hal_flash_ex.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h
 tdc1011\stm32f4xx_hal_flash_ex.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h
 tdc1011\stm32f4xx_hal_flash_ex.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h
+tdc1011\stm32f4xx_hal_flash_ex.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
