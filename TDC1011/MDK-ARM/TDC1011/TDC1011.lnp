@@ -1,6 +1,7 @@
 --cpu=Cortex-M4.fp
 "tdc1011\startup_stm32f407xx.o"
 "tdc1011\tdc1011.o"
+"tdc1011\ext_int.o"
 "tdc1011\main.o"
 "tdc1011\stm32f4xx_it.o"
 "tdc1011\stm32f4xx_hal_msp.o"
